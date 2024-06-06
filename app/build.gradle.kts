@@ -82,4 +82,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.1")
     implementation("androidx.lifecycle:lifecycle-livedata:2.8.1")
+
+    /* Splash Screen */
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
+    /* Material Icons */
+    implementation("androidx.compose.material:material-icons-extended:1.6.7")
 }

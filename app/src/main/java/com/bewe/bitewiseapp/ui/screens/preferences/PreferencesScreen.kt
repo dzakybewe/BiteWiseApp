@@ -1,8 +1,5 @@
 package com.bewe.bitewiseapp.ui.screens.preferences
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,32 +29,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bewe.bitewiseapp.R
 import com.bewe.bitewiseapp.ui.components.PreferencesType
-import com.bewe.bitewiseapp.ui.screens.landing.LandingScreen
 
-class PreferencesScreenActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            PreferencesScreen()
-        }
-    }
-}
 @Composable
 fun PreferencesScreen(modifier: Modifier = Modifier) {
     val itemList = listOf(1, 2, 3, 4, 5, 6) // Cuma buat tes
 
-    Scaffold {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(it)
-                .padding(30.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+    PreferencesContent(itemList = itemList)
+}
 
-        }
+@Composable
+fun PreferencesContent(
+    modifier: Modifier = Modifier,
+    itemList: List<Int>,
+) {
+    Scaffold { innerPadding ->
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize().padding(innerPadding)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.preferences_background), // Replace with your image resource
@@ -66,16 +53,17 @@ fun PreferencesScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxSize()
             )
 
-            PreferencesContent(itemList = itemList)
-
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(40.dp),
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
+                PreferencesList(itemList = itemList)
+
                 Spacer(modifier = Modifier.weight(1f))
+
                 Text(
                     text = "choose your preferences!",
                     style = TextStyle(
@@ -102,7 +90,7 @@ fun PreferencesScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PreferencesContent(
+fun PreferencesList(
     modifier: Modifier = Modifier,
     itemList: List<Int>,
 ) {

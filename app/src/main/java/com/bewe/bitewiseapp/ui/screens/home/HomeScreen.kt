@@ -1,6 +1,7 @@
 package com.bewe.bitewiseapp.ui.screens.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -31,7 +33,10 @@ import com.bewe.bitewiseapp.ui.theme.BiteWiseAppTheme
 import com.bewe.bitewiseapp.ui.theme.Orange
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    navigateToDetail: () -> Unit,
+) {
     val itemList = listOf(1, 2, 3, 4, 5, 6) // Cuma buat tes
     val popularList = listOf(1, 2, 3) // Cuma buat tes
     Scaffold {
@@ -44,14 +49,13 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         ) {
 
             Image(
-
                 painter = painterResource(id = R.drawable.logo),
-                contentDescription = "Logo"
+                contentDescription = "Logo",
             )
 
             GreetingSection()
 
-            HomeContent(itemList = itemList)
+            HomeContent(itemList = itemList, navigateToDetail = navigateToDetail)
 
             Row(
                 modifier = Modifier
@@ -76,7 +80,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 )
             }
 
-            HomeContent(itemList = popularList)
+            HomeContent(itemList = popularList, navigateToDetail = navigateToDetail)
         }
     }
 }
@@ -158,6 +162,7 @@ fun GreetingSection(modifier: Modifier = Modifier) {
 fun HomeContent(
     modifier: Modifier = Modifier,
     itemList: List<Int>,
+    navigateToDetail: () -> Unit,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -167,15 +172,9 @@ fun HomeContent(
         modifier = modifier,
     ) {
         items(itemList) {
-            RestaurantTile()
+            RestaurantTile(modifier = Modifier.clickable {
+                navigateToDetail()
+            })
         }
-    }
-}
-
-@Preview
-@Composable
-private fun HomeScreenPreview() {
-    BiteWiseAppTheme {
-        HomeScreen()
     }
 }

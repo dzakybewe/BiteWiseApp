@@ -24,15 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bewe.bitewiseapp.R
 
-class LandingScreenActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            LandingScreen()
-        }
-    }
-}
-
 @Composable
 fun LandingScreen() {
     Box(

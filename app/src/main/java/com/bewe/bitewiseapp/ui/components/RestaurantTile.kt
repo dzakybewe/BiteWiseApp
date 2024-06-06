@@ -61,12 +61,3 @@ fun RestaurantTile(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-private fun RestaurantTilePreview() {
-    BiteWiseAppTheme {
-        RestaurantTile()
-    }
-}
-
