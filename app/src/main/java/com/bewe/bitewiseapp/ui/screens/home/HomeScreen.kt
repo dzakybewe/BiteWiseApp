@@ -39,11 +39,12 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             modifier = modifier
                 .fillMaxSize()
                 .padding(it)
-                .padding(16.dp),
+                .padding(30.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             Image(
+
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo"
             )
@@ -58,7 +59,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Popular",
+                    text = "top rated",
                     style = TextStyle(
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
@@ -66,7 +67,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     ),
                 )
                 Text(
-                    text = " these days 🔥",
+                    text = " foods 🔥",
                     style = TextStyle(
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
@@ -110,7 +111,7 @@ fun GreetingSection(modifier: Modifier = Modifier) {
 
         Row {
             Text(
-                text = "We",
+                text = "we",
                 style = TextStyle(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,

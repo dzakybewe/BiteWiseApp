@@ -31,7 +31,7 @@ fun RestaurantTile(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = modifier.size(100.dp),
+        modifier = modifier.size(85.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
