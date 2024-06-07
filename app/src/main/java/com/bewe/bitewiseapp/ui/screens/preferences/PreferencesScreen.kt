@@ -24,30 +24,32 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bewe.bitewiseapp.R
 import com.bewe.bitewiseapp.ui.components.PreferencesType
 
 @Composable
-fun PreferencesScreen(modifier: Modifier = Modifier) {
+fun PreferencesScreen(modifier: Modifier = Modifier, navigateToHome: () -> Unit) {
     val itemList = listOf(1, 2, 3, 4, 5, 6) // Cuma buat tes
 
-    PreferencesContent(itemList = itemList)
+    PreferencesContent(navigateToHome = navigateToHome, itemList = itemList)
 }
 
 @Composable
 fun PreferencesContent(
     modifier: Modifier = Modifier,
+    navigateToHome: () -> Unit,
     itemList: List<Int>,
 ) {
     Scaffold { innerPadding ->
         Box(
-            modifier = modifier.fillMaxSize().padding(innerPadding)
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.preferences_background), // Replace with your image resource
+                painter = painterResource(id = R.drawable.preferences_background),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -75,9 +77,7 @@ fun PreferencesContent(
                 )
                 Button(
                     shape = RoundedCornerShape(15.dp),
-                    onClick = {
-                        // Handle button click
-                    },
+                    onClick = { navigateToHome() },
                     colors = ButtonDefaults.buttonColors(Color(0xFFFFA500)),
                     modifier = Modifier.padding(bottom = 50.dp)
                 ) {
@@ -105,10 +105,4 @@ fun PreferencesList(
             PreferencesType()
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreferencesScreenPreview() {
-    PreferencesScreen()
 }
