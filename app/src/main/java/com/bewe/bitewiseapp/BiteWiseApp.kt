@@ -45,8 +45,7 @@ fun BiteWiseApp(
         modifier = modifier,
         bottomBar = {
             if (
-                currentRoute != Screen.Detail.route ||
-                currentRoute != Screen.Landing.route ||
+                currentRoute != Screen.Landing.route &&
                 currentRoute != Screen.Preferences.route
             ) {
                 BottomBar(navController = navController)
@@ -55,7 +54,7 @@ fun BiteWiseApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route, // Logika If else pernah ngisi kuesioner atau ngga, kalo udah ke home, kalo ngga ke landing
+            startDestination = Screen.Landing.route, // Logika If else pernah ngisi kuesioner atau ngga, kalo udah ke home, kalo ngga ke landing
             modifier = Modifier.padding(innerPadding)
         ) {
 
@@ -83,12 +82,20 @@ fun BiteWiseApp(
 
             /* Landing Screen */
             composable(Screen.Landing.route) {
-                LandingScreen()
+                LandingScreen(
+                    navigateToPreferences = {
+                        navController.navigate(Screen.Preferences.route)
+                    }
+                )
             }
 
             /* Preferences Screen */
             composable(Screen.Preferences.route) {
-                PreferencesScreen()
+                PreferencesScreen(
+                    navigateToHome = {
+                        navController.navigate(Screen.Home.route)
+                    }
+                )
             }
 
         }

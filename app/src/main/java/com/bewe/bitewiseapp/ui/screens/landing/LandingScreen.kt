@@ -25,7 +25,10 @@ import androidx.compose.ui.unit.sp
 import com.bewe.bitewiseapp.R
 
 @Composable
-fun LandingScreen() {
+fun LandingScreen(
+    modifier: Modifier = Modifier,
+    navigateToPreferences: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -59,7 +62,7 @@ fun LandingScreen() {
             Button(
                 shape = RoundedCornerShape(15.dp),
                 onClick = {
-                    // Handle button click
+                    navigateToPreferences()
                 },
                 colors = ButtonDefaults.buttonColors(Color(0xFFFFA500)),
                 modifier = Modifier.padding(bottom = 50.dp)
@@ -68,10 +71,4 @@ fun LandingScreen() {
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LandingScreenPreview() {
-    LandingScreen()
 }
