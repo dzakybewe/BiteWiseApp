@@ -1,6 +1,5 @@
 package com.bewe.bitewiseapp
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
@@ -46,7 +45,8 @@ fun BiteWiseApp(
         bottomBar = {
             if (
                 currentRoute != Screen.Landing.route &&
-                currentRoute != Screen.Preferences.route
+                currentRoute != Screen.Preferences.route &&
+                currentRoute != Screen.Detail.route
             ) {
                 BottomBar(navController = navController)
             }
