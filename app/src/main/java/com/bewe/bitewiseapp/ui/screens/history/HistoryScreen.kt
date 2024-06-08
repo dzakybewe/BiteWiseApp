@@ -30,17 +30,60 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter.State.Empty.painter
 import com.bewe.bitewiseapp.R
+import com.bewe.bitewiseapp.ViewModelFactory
+import com.bewe.bitewiseapp.data.UiState
+import com.bewe.bitewiseapp.data.remote.model.ProductsItem
+import com.bewe.bitewiseapp.di.Injection
+import com.bewe.bitewiseapp.ui.screens.home.HomeContent
 import com.bewe.bitewiseapp.ui.theme.BiteWiseAppTheme
 import com.bewe.bitewiseapp.ui.theme.Orange
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(
     modifier: Modifier = Modifier,
+    viewModel: HistoryViewModel = viewModel(
+        factory = ViewModelFactory(repository = Injection.provideRepository())
+    ),
 ) {
-    val items = listOf(1, 2, 3)
+    when (val uiState = viewModel.result) {
+        is UiState.Loading -> {
+            Box(
+                modifier = modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                viewModel.getAllProducts()
+                Text("Loading...")
+            }
+        }
 
+        is UiState.Success -> {
+            val data = uiState.data
+            HistoryContent(
+                itemsList = data.products
+            )
+        }
+
+        is UiState.Error -> {
+            Box(
+                modifier = modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text("error")
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HistoryContent(
+    modifier: Modifier = Modifier,
+    itemsList: List<ProductsItem>,
+) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -58,31 +101,29 @@ fun HistoryScreen(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(top = 48.dp, start = 34.dp, end = 34.dp),
+                .padding(start = 34.dp, end = 34.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            HistoryContent(itemsList = items)
+            LazyColumn(
+                modifier = modifier,
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                items(itemsList) {
+                    HistoryItem(
+                        data = it
+                    )
+                }
+            }
         }
     }
+
 }
 
 @Composable
-fun HistoryContent(
+fun HistoryItem(
+    data: ProductsItem,
     modifier: Modifier = Modifier,
-    itemsList: List<Int>,
 ) {
-    LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-        items(itemsList) {
-            HistoryItem()
-        }
-    }
-}
-
-@Composable
-fun HistoryItem(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(48.dp),
@@ -93,12 +134,19 @@ fun HistoryItem(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .height(150.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.sample_picture),
+            AsyncImage(
+                model = data.images[0],
                 contentDescription = "Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth()
             )
+
+//            Image(
+//                painter = painterResource(id = R.drawable.sample_picture),
+//                contentDescription = "Image",
+//                contentScale = ContentScale.Crop,
+//                modifier = Modifier.fillMaxWidth()
+//            )
         }
         Box(
             modifier = Modifier
@@ -108,7 +156,7 @@ fun HistoryItem(modifier: Modifier = Modifier) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Mie Ayam",
+                text = data.title,
                 style = TextStyle(
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,

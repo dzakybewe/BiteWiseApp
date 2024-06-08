@@ -23,7 +23,7 @@ class ApiConfig {
 
             val retrofit =
                 Retrofit.Builder()
-                    .baseUrl("Base Url Goes Here")
+                    .baseUrl("https://dummyjson.com/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build()
