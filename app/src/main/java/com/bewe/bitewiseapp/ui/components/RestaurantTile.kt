@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,11 +18,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bewe.bitewiseapp.R
-import com.bewe.bitewiseapp.ui.theme.BiteWiseAppTheme
 import com.bewe.bitewiseapp.ui.theme.Orange
 
 @Composable
@@ -33,7 +30,6 @@ fun RestaurantTile(
     Card(
         modifier = modifier.size(85.dp),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
         Box(
             modifier = Modifier.background(Orange).weight(3f).fillMaxWidth(),
