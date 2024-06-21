@@ -145,7 +145,7 @@ fun GreetingSection(modifier: Modifier = Modifier) {
                 ),
             )
             Text(
-                text = " Bewe!",
+                text = " BiteWiser!",
                 style = TextStyle(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
