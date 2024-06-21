@@ -1,7 +1,7 @@
 package com.bewe.bitewiseapp.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,16 +26,18 @@ fun PreferencesTile(
     preferenceItem: PreferencesItem,
 ) {
     Card(
-        border = CardDefaults.outlinedCardBorder(
-            enabled = isClicked
-        ),
+        border = if (isClicked) {
+            BorderStroke(
+                width = 3.dp,
+                color = Orange
+            )
+        } else { null },
         modifier = modifier.size(130.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
     ) {
         Box(
             modifier = Modifier
-                .background(Orange)
                 .fillMaxWidth()
                 .wrapContentSize(),
             contentAlignment = Alignment.Center
@@ -43,7 +45,7 @@ fun PreferencesTile(
             Image(
                 painter = painterResource(id = preferenceItem.imageUrl),
                 contentDescription = "Image",
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxSize()
             )
         }
