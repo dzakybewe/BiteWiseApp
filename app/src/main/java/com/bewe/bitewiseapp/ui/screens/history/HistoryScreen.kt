@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,28 +18,42 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bewe.bitewiseapp.R
-import com.bewe.bitewiseapp.ui.theme.BiteWiseAppTheme
+import com.bewe.bitewiseapp.ViewModelFactory
+import com.bewe.bitewiseapp.data.remote.model.HistoryItem
 import com.bewe.bitewiseapp.ui.theme.Orange
 
+/* Feature don't work because history was added when user clicked
+* on an item (calling detail from API). Since the endpoint for restaurant
+* detail don't work. The history also not able to show */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(
     modifier: Modifier = Modifier,
+    viewModel: HistoryViewModel = viewModel(
+        factory = ViewModelFactory.getAuthInstance(LocalContext.current)
+    ),
 ) {
-    val items = listOf(1, 2, 3)
 
+    LaunchedEffect(key1 = Unit) {
+        viewModel.history()
+    }
+    val result by viewModel.result.collectAsState()
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -55,34 +68,65 @@ fun HistoryScreen(
             )
         },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(top = 48.dp, start = 34.dp, end = 34.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Box(
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            contentAlignment = Alignment.Center
         ) {
-            HistoryContent(itemsList = items)
+            Text("Feature will be available soon")
         }
+//        when (result) {
+//            is UiState.Loading -> {
+//                CircularProgressIndicator()
+//            }
+//
+//            is UiState.Error -> {
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(innerPadding),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Text((result as UiState.Error).errorMessage)
+//                }
+//            }
+//
+//            is UiState.Success -> {
+//                Column(
+//                    modifier = Modifier
+//                        .padding(innerPadding)
+//                        .padding(top = 48.dp, start = 34.dp, end = 34.dp),
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    HistoryContent(itemsList = (result as UiState.Success<HistoryResponse>).data.data.history)
+//                }
+//            }
+//        }
+
     }
 }
 
 @Composable
-fun HistoryContent(
+private fun HistoryContent(
     modifier: Modifier = Modifier,
-    itemsList: List<Int>,
+    itemsList: List<HistoryItem>,
 ) {
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         items(itemsList) {
-            HistoryItem()
+            HistoryItem(
+                item = it
+            )
         }
     }
 }
 
 @Composable
-fun HistoryItem(modifier: Modifier = Modifier) {
+private fun HistoryItem(
+    modifier: Modifier = Modifier,
+    item: HistoryItem,
+) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(48.dp),
@@ -108,7 +152,7 @@ fun HistoryItem(modifier: Modifier = Modifier) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Mie Ayam",
+                text = item.restaurant.name,
                 style = TextStyle(
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
@@ -117,13 +161,5 @@ fun HistoryItem(modifier: Modifier = Modifier) {
                 )
             )
         }
-    }
-}
-
-@Preview
-@Composable
-private fun HistoryScreenPreview() {
-    BiteWiseAppTheme {
-        HistoryScreen()
     }
 }

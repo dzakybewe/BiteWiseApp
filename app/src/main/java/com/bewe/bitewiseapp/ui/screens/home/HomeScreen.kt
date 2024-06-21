@@ -1,5 +1,7 @@
 package com.bewe.bitewiseapp.ui.screens.home
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -23,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,28 +35,38 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bewe.bitewiseapp.R
+import com.bewe.bitewiseapp.ViewModelFactory
+import com.bewe.bitewiseapp.common.UiState
+import com.bewe.bitewiseapp.data.remote.model.RecommendationResponse
+import com.bewe.bitewiseapp.data.remote.model.RecommendationsItem
 import com.bewe.bitewiseapp.ui.components.RestaurantTile
-import com.bewe.bitewiseapp.ui.theme.BiteWiseAppTheme
 import com.bewe.bitewiseapp.ui.theme.Orange
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    navigateToDetail: () -> Unit,
+    navigateToDetail: (Int) -> Unit,
+    viewModel: HomeScreenViewModel = viewModel(
+        factory = ViewModelFactory.getAuthInstance(LocalContext.current)
+    ),
+    context: Context = LocalContext.current,
 ) {
-    val itemList = listOf(1, 2, 3, 4, 5, 6) // Cuma buat tes
-    val popularList = listOf(1, 2, 3) // Cuma buat tes
+
+    val result by viewModel.result.collectAsState()
+    val typeId by viewModel.typeId.collectAsState()
 
     val locations = listOf("Select Location", "Jaksel", "Jakbar", "Jaktim")
-    var expanded by remember { mutableStateOf(false) }
     var selectedLocation by remember { mutableStateOf(locations[0]) }
+
+    var expanded by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -61,7 +75,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(30.dp),
+                .padding(horizontal = 30.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -74,38 +88,42 @@ fun HomeScreen(
                 expanded = expanded,
                 selectedLocation = selectedLocation,
                 locations = locations,
-                onExpandedChange = { expanded = it },
-                onLocationClick = { selectedLocation = it }
+                onExpandedChange = {
+                    Toast.makeText(
+                        context,
+                        "Feature will be available soon",
+                        Toast.LENGTH_LONG
+                    ).show()
+//                    expanded = it
+                },
+                onLocationClick = { location ->
+//                    selectedLocation = location
+//                    val regionId = locations.indexOf(location)
+//                    coroutineScope.launch {
+//                        viewModel.recommendation(regionId)
+//                    }
+                }
             )
 
             GreetingSection()
 
-            HomeContent(itemList = itemList, navigateToDetail = navigateToDetail)
+            when (result) {
+                is UiState.Loading -> {
+                    CircularProgressIndicator()
+                }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "top rated",
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Orange
-                    ),
-                )
-                Text(
-                    text = " foods 🔥",
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                    ),
-                )
+                is UiState.Error -> {
+                    Text((result as UiState.Error).errorMessage)
+                }
+
+                is UiState.Success -> {
+                    HomeContent(
+                        itemList = (result as UiState.Success<RecommendationResponse>).data.data.recommendations,
+                        navigateToDetail = navigateToDetail,
+                        context = context
+                    )
+                }
             }
-
-            HomeContent(itemList = popularList, navigateToDetail = navigateToDetail)
         }
     }
 }
@@ -242,30 +260,29 @@ fun LocationDropdown(
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
-    itemList: List<Int>,
-    navigateToDetail: () -> Unit,
+    itemList: List<RecommendationsItem>,
+    navigateToDetail: (Int) -> Unit,
+    context: Context,
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
+        columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = modifier.background(Color.White),
+        modifier = modifier
+            .height(500.dp)
+            .background(Color.White),
     ) {
         items(itemList) {
-            RestaurantTile(modifier = Modifier.clickable {
-                navigateToDetail()
-            })
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun HomeScreenPreview() {
-    BiteWiseAppTheme {
-        HomeScreen {
-
+            RestaurantTile(
+                item = it,
+                modifier = Modifier.clickable {
+//                    Log.d("Type", it.typeId.toString())
+//                    navigateToDetail(it.id)
+                    Toast.makeText(context, "Feature will be available soon", Toast.LENGTH_LONG)
+                        .show()
+                }
+            )
         }
     }
 }

@@ -4,23 +4,27 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.bewe.bitewiseapp.pref.SharedPreferencesHelper
+import androidx.navigation.navArgument
 import com.bewe.bitewiseapp.ui.navigation.NavigationItem
 import com.bewe.bitewiseapp.ui.navigation.Screen
 import com.bewe.bitewiseapp.ui.screens.detail.DetailScreen
@@ -33,9 +37,18 @@ import com.bewe.bitewiseapp.ui.screens.preferences.PreferencesScreen
 fun BiteWiseApp(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
+    mainViewModel: MainViewModel = viewModel(
+        factory = ViewModelFactory.getAuthInstance(LocalContext.current)
+    ),
 ) {
-    val context = LocalContext.current
-    val userId = remember { SharedPreferencesHelper.getUserId(context) }
+    val session by mainViewModel.session.collectAsState()
+    val isLoggedIn by mainViewModel.isLoggedIn.collectAsState()
+
+    LaunchedEffect(session) {
+        if (session?.token.isNullOrEmpty() && session?.deviceId.isNullOrEmpty()) {
+            mainViewModel.initializeSession()
+        }
+    }
 
     val navBackstackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackstackEntry?.destination?.route
@@ -54,7 +67,11 @@ fun BiteWiseApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Landing.route, // Logika If else pernah ngisi kuesioner atau ngga, kalo udah ke home, kalo ngga ke landing
+            startDestination = if (isLoggedIn == true) {
+                Screen.Home.route
+            } else {
+                Screen.Landing.route
+            },
             modifier = Modifier.padding(innerPadding)
         ) {
 
@@ -62,16 +79,23 @@ fun BiteWiseApp(
             /* Home Screen */
             composable(Screen.Home.route) {
                 HomeScreen(
-                    navigateToDetail = {
-                        navController.navigate(Screen.Detail.route)
+                    navigateToDetail = { id ->
+                        navController.navigate(Screen.Detail.createRoute(id))
                     }
                 )
             }
 
             /* Detail Screen */
-            composable(Screen.Detail.route) {
+            composable(
+                Screen.Detail.route,
+                arguments = listOf(
+                    navArgument("id") { type = NavType.IntType }
+                )
+            ) {
+                val id = it.arguments?.getInt("id") ?: 0
                 DetailScreen(
-                    navigateBack = { navController.navigateUp() }
+                    navigateBack = { navController.navigateUp() },
+                    id = id
                 )
             }
 
@@ -85,7 +109,7 @@ fun BiteWiseApp(
                 LandingScreen(
                     navigateToPreferences = {
                         navController.navigate(Screen.Preferences.route)
-                    }
+                    },
                 )
             }
 
@@ -118,6 +142,11 @@ fun BottomBar(
                 title = "Home",
                 icon = Icons.Default.Home,
                 screen = Screen.Home
+            ),
+            NavigationItem(
+                title = "Re-commend",
+                icon = Icons.Default.RestaurantMenu ,
+                screen = Screen.Preferences
             ),
             NavigationItem(
                 title = "History",

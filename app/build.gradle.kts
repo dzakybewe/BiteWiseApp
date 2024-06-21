@@ -18,6 +18,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "BASE_URL", "\"http://34.70.201.1/\"")
     }
 
     buildTypes {
@@ -88,4 +90,10 @@ dependencies {
 
     /* Material Icons */
     implementation("androidx.compose.material:material-icons-extended:1.6.7")
+
+    /* DataStore */
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    /* LiveData */
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.8")
 }
