@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
 
         setContent {
-            BiteWiseAppTheme {
+            BiteWiseAppTheme(darkTheme = false) {
                 BiteWiseApp()
             }
         }
